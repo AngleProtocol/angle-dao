@@ -192,33 +192,8 @@ def set_emergency_wihdrawal():
     assert msg.sender == self.admin
     self.emergency_withdrawal = True
 
-@external
-@nonreentrant('lock')
-def withdraw_fast():
-    """
-    @notice withdraw all tokens when in emergency states
-    """
-    assert self.emergency_withdrawal
-
-    _locked: LockedBalance = self.locked[msg.sender]
-    value: uint256 = convert(_locked.amount, uint256)
-
-    old_locked: LockedBalance = _locked
-    _locked.end = 0
-    _locked.amount = 0
-    self.locked[msg.sender] = _locked
-    supply_before: uint256 = self.supply
-    self.supply = supply_before - value
-
-    # old_locked can have either expired <= timestamp or zero end
-    # _locked has only 0 end
-    # Both can have >= 0 amount
-    # self._checkpoint(msg.sender, old_locked, _locked)
-
-    assert ERC20(self.token).transfer(msg.sender, value)
-
-    log Withdraw(msg.sender, value, block.timestamp)
-    log Supply(supply_before, supply_before - value)
+# @external
+# def set_
 
 @external
 def commit_smart_wallet_checker(addr: address):
