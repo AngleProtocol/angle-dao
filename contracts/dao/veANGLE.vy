@@ -557,6 +557,39 @@ def find_block_epoch(_block: uint256, max_epoch: uint256) -> uint256:
             _max = _mid - 1
     return _min
 
+@internal
+@view
+def _find_user_timestamp_epoch(addr: address, ts: uint256) -> uint256:
+    """
+    @notice Find the epoch for a user's timestamp
+    @param addr User wallet address
+    @param ts Epoch time to find
+    @return User epoch number
+    """
+    min_value: uint256 = 0
+    max_value: uint256 = self.user_point_epoch[addr]
+
+    for i in range(128):  # Will be always enough for 128-bit numbers
+        if min_value >= max_value:
+            break
+        mid: uint256 = (min_value + max_value + 1) / 2
+        if self.user_point_history[addr][mid].ts <= ts:
+            min_value = mid
+        else:
+            max_value = mid - 1
+    return min_value
+
+@external
+@view
+def find_user_timestamp_epoch(addr: address, ts: uint256) -> uint256:
+    """
+    @notice Find the epoch for a user's timestamp
+    @param addr User wallet address
+    @param ts Epoch time to find
+    @return User epoch number
+    """
+    return self._find_user_timestamp_epoch(addr, ts)
+
 @external
 @view
 def balanceOf(addr: address, ts: uint256 = block.timestamp) -> uint256:
@@ -567,7 +600,7 @@ def balanceOf(addr: address, ts: uint256 = block.timestamp) -> uint256:
     @param ts Epoch time to return voting power at
     @return User voting power
     """
-    _epoch: uint256 = _find_user_timestamp_epoch(addr, ts)
+    _epoch: uint256 = self._find_user_timestamp_epoch(addr, ts)
     if _epoch == 0:
         return 0
     else:
@@ -576,39 +609,6 @@ def balanceOf(addr: address, ts: uint256 = block.timestamp) -> uint256:
         if last_point.bias < 0:
             last_point.bias = 0
         return convert(last_point.bias, uint256)
-
-@external
-@view
-@def find_user_timestamp_epoch(addr: address, ts: uint256) -> uint256:
-    """
-    @notice Find the epoch for a user's timestamp
-    @param addr User wallet address
-    @param ts Epoch time to find
-    @return User epoch number
-    """
-    return self._find_user_timestamp_epoch(addr, ts)
-
-@internal
-@view
-def _find_user_timestamp_epoch(addr: address, ts: uint256) -> uint256:
-    """
-    @notice Find the epoch for a user's timestamp
-    @param addr User wallet address
-    @param ts Epoch time to find
-    @return User epoch number
-    """
-    min: u256 = 0;
-    max: u256 = userPointEpoch[addr];
-
-    for i in range(128):  # Will be always enough for 128-bit numbers
-        if min >= max:
-            break
-        mid: u256 = (min + max + 1) / 2
-        if userPointHistory[addr][mid].ts <= ts:
-            min = mid
-        else:
-            max = mid - 1
-    return min
 
 @internal
 @view
