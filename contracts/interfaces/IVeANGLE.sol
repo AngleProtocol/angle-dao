@@ -52,5 +52,7 @@ interface IveANGLE is IERC20MetadataUpgradeable {
 
     function find_user_timestamp_epoch(address addr, uint256 ts) external view returns (uint256);
 
+    function locked__end(address addr) external view returns (uint256);
+
     function user_point_history(address addr, uint256 idx) external view returns (Point memory);
 }

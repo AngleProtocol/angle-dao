@@ -18,7 +18,7 @@ contract Fixture is Test, CommonUtils {
     address public alice;
     address public bob;
 
-    function setUp() public {
+    function setUp() public virtual {
         uint256 CHAIN_SOURCE = CHAIN_ETHEREUM;
 
         vm.createSelectFork("mainnet");
