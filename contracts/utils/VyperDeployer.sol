@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
+// solhint-disable
 
 pragma solidity ^0.8.7;
 
@@ -8,7 +9,7 @@ interface _CheatCodes {
 }
 
 contract VyperDeployer {
-    address constant HEVM_ADDRESS = address(bytes20(uint160(uint256(keccak256("hevm cheat code")))));
+    address public constant HEVM_ADDRESS = address(bytes20(uint160(uint256(keccak256("hevm cheat code")))));
 
     /// @notice Initializes cheat codes in order to use ffi to compile Vyper contracts
     _CheatCodes cheatCodes = _CheatCodes(HEVM_ADDRESS);
