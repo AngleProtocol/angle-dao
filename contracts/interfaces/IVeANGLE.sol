@@ -25,6 +25,9 @@ interface IveANGLE is IERC20MetadataUpgradeable {
         string memory name,
         string memory symbol
     ) external;
+    function checkpoint() external;
+    function withdraw() external;
+    function deposit_for(address addr, uint256 value) external;
     function admin() external view returns (address);
     function smart_wallet_checker() external view returns (address);
     function create_lock(uint256 value, uint256 unlock_time) external;

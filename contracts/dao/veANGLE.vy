@@ -179,7 +179,7 @@ def apply_transfer_ownership():
     log ApplyOwnership(_admin)
 
 @external
-def set_emergency_wihdrawal():
+def set_emergency_withdrawal():
     assert msg.sender == self.admin
     self.emergency_withdrawal = True
 
@@ -424,7 +424,7 @@ def checkpoint():
     """
     @notice Record global data to checkpoint
     """
-    assert !emergency_withdrawal, "Emergency withdrawal enabled"
+    assert not self.emergency_withdrawal, "Emergency withdrawal enabled"
     self._checkpoint(ZERO_ADDRESS, empty(LockedBalance), empty(LockedBalance))
 
 @external
@@ -437,7 +437,7 @@ def deposit_for(_addr: address, _value: uint256):
     @param _addr User's wallet address
     @param _value Amount to add to user's lock
     """
-    assert !emergency_withdrawal, "Emergency withdrawal enabled"
+    assert not self.emergency_withdrawal, "Emergency withdrawal enabled"
     _locked: LockedBalance = self.locked[_addr]
 
     assert _value > 0  # dev: need non-zero value
@@ -454,7 +454,7 @@ def create_lock(_value: uint256, _unlock_time: uint256):
     @param _value Amount to deposit
     @param _unlock_time Epoch time when tokens unlock, rounded down to whole weeks
     """
-    assert !emergency_withdrawal, "Emergency withdrawal enabled"
+    assert not self.emergency_withdrawal, "Emergency withdrawal enabled"
     self.assert_not_contract(msg.sender)
     unlock_time: uint256 = (_unlock_time / WEEK) * WEEK  # Locktime is rounded down to weeks
     _locked: LockedBalance = self.locked[msg.sender]
@@ -475,7 +475,7 @@ def increase_amount(_value: uint256):
             without modifying the unlock time
     @param _value Amount of tokens to deposit and add to the lock
     """
-    assert !emergency_withdrawal, "Emergency withdrawal enabled"
+    assert not self.emergency_withdrawal, "Emergency withdrawal enabled"
     self.assert_not_contract(msg.sender)
     _locked: LockedBalance = self.locked[msg.sender]
 
@@ -493,7 +493,7 @@ def increase_unlock_time(_unlock_time: uint256):
     @notice Extend the unlock time for `msg.sender` to `_unlock_time`
     @param _unlock_time New epoch time for unlocking
     """
-    assert !emergency_withdrawal, "Emergency withdrawal enabled"
+    assert not self.emergency_withdrawal, "Emergency withdrawal enabled"
     self.assert_not_contract(msg.sender)
     _locked: LockedBalance = self.locked[msg.sender]
     unlock_time: uint256 = (_unlock_time / WEEK) * WEEK  # Locktime is rounded down to weeks
@@ -513,7 +513,7 @@ def withdraw():
     @notice Withdraw all tokens for `msg.sender`
     @dev Only possible if the lock has expired
     """
-    assert !emergency_withdrawal, "Emergency withdrawal enabled"
+    assert not self.emergency_withdrawal, "Emergency withdrawal enabled"
     _locked: LockedBalance = self.locked[msg.sender]
     assert block.timestamp >= _locked.end, "The lock didn't expire"
     value: uint256 = convert(_locked.amount, uint256)
