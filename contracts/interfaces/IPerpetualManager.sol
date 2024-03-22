@@ -19,19 +19,11 @@ interface IPerpetualManagerFront is IERC721Metadata {
         uint256 minNetMargin
     ) external returns (uint256 perpetualID);
 
-    function closePerpetual(
-        uint256 perpetualID,
-        address to,
-        uint256 minCashOutAmount
-    ) external;
+    function closePerpetual(uint256 perpetualID, address to, uint256 minCashOutAmount) external;
 
     function addToPerpetual(uint256 perpetualID, uint256 amount) external;
 
-    function removeFromPerpetual(
-        uint256 perpetualID,
-        uint256 amount,
-        address to
-    ) external;
+    function removeFromPerpetual(uint256 perpetualID, uint256 amount, address to) external;
 
     function liquidatePerpetuals(uint256[] memory perpetualIDs) external;
 
@@ -60,11 +52,7 @@ interface IPerpetualManagerFunctions is IAccessControl {
 
     function setFeeManager(IFeeManager feeManager_) external;
 
-    function setHAFees(
-        uint64[] memory _xHAFees,
-        uint64[] memory _yHAFees,
-        uint8 deposit
-    ) external;
+    function setHAFees(uint64[] memory _xHAFees, uint64[] memory _yHAFees, uint8 deposit) external;
 
     function setTargetAndLimitHAHedge(uint64 _targetHAHedge, uint64 _limitHAHedge) external;
 

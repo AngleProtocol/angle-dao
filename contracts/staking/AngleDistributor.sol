@@ -27,7 +27,7 @@ contract AngleDistributor is AngleDistributorEvents, ReentrancyGuardUpgradeable,
     uint256 public constant RATE_REDUCTION_COEFFICIENT = 1007827884862117171; // 1.5 ^ (1/52) * 10**18
 
     /// @notice Base used for computation
-    uint256 public constant BASE = 10**18;
+    uint256 public constant BASE = 10 ** 18;
 
     /// @notice Maps the address of a gauge to the last time this gauge received rewards
     mapping(address => uint256) public lastTimeGaugePaid;
@@ -290,11 +290,7 @@ contract AngleDistributor is AngleDistributorEvents, ReentrancyGuardUpgradeable,
     /// @dev Added to support recovering LP Rewards and other mistaken tokens
     /// from other systems to be distributed to holders
     /// @dev This function could also be used to recover ANGLE tokens in case the rate got smaller
-    function recoverERC20(
-        address tokenAddress,
-        address to,
-        uint256 amount
-    ) external onlyRole(GOVERNOR_ROLE) {
+    function recoverERC20(address tokenAddress, address to, uint256 amount) external onlyRole(GOVERNOR_ROLE) {
         // If the token is the ANGLE token, we need to make sure that governance is not going to withdraw
         // too many tokens and that it'll be able to sustain the weekly distribution forever
         // This check assumes that `distributeReward` has been called for gauges and that there are no gauges

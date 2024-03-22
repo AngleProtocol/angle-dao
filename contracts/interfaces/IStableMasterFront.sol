@@ -8,12 +8,7 @@ import "../interfaces/IPoolManager.sol";
 /// @author Angle Core Team
 /// @dev Front interface, meaning only user-facing functions
 interface IStableMasterFront {
-    function mint(
-        uint256 amount,
-        address user,
-        IPoolManager poolManager,
-        uint256 minStableAmount
-    ) external;
+    function mint(uint256 amount, address user, IPoolManager poolManager, uint256 minStableAmount) external;
 
     function burn(
         uint256 amount,
@@ -23,18 +18,9 @@ interface IStableMasterFront {
         uint256 minCollatAmount
     ) external;
 
-    function deposit(
-        uint256 amount,
-        address user,
-        IPoolManager poolManager
-    ) external;
+    function deposit(uint256 amount, address user, IPoolManager poolManager) external;
 
-    function withdraw(
-        uint256 amount,
-        address burner,
-        address dest,
-        IPoolManager poolManager
-    ) external;
+    function withdraw(uint256 amount, address burner, address dest, IPoolManager poolManager) external;
 
     function agToken() external view returns (address);
 }

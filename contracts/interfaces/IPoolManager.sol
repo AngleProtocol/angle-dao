@@ -40,11 +40,7 @@ interface IPoolManagerFunctions {
 
     function debtOutstanding() external view returns (uint256);
 
-    function report(
-        uint256 _gain,
-        uint256 _loss,
-        uint256 _debtPayment
-    ) external;
+    function report(uint256 _gain, uint256 _loss, uint256 _debtPayment) external;
 
     // ============================ Governance =====================================
 

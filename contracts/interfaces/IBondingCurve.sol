@@ -11,11 +11,7 @@ import "./IOracle.sol";
 interface IBondingCurve {
     // ============================ User Functions =================================
 
-    function buySoldToken(
-        IAgToken _agToken,
-        uint256 targetSoldTokenQuantity,
-        uint256 maxAmountToPayInAgToken
-    ) external;
+    function buySoldToken(IAgToken _agToken, uint256 targetSoldTokenQuantity, uint256 maxAmountToPayInAgToken) external;
 
     // ========================== Governance Functions =============================
 

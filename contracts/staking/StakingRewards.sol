@@ -71,12 +71,7 @@ contract StakingRewards is StakingRewardsEvents, IStakingRewards, ReentrancyGuar
     /// @param _rewardToken ERC20 token given as reward
     /// @param _stakingToken ERC20 token used for staking
     /// @param _rewardsDuration Duration of the staking contract
-    constructor(
-        address _rewardsDistribution,
-        address _rewardToken,
-        address _stakingToken,
-        uint256 _rewardsDuration
-    ) {
+    constructor(address _rewardsDistribution, address _rewardToken, address _stakingToken, uint256 _rewardsDuration) {
         require(_stakingToken != address(0) && _rewardToken != address(0) && _rewardsDistribution != address(0), "0");
 
         // We are not checking the compatibility of the reward token between the distributor and this contract here
@@ -87,7 +82,7 @@ contract StakingRewards is StakingRewardsEvents, IStakingRewards, ReentrancyGuar
         rewardsDuration = _rewardsDuration;
         rewardsDistribution = _rewardsDistribution;
 
-        stakingBase = 10**IERC20Metadata(_stakingToken).decimals();
+        stakingBase = 10 ** IERC20Metadata(_stakingToken).decimals();
     }
 
     // ============================ Modifiers ======================================
@@ -201,12 +196,10 @@ contract StakingRewards is StakingRewardsEvents, IStakingRewards, ReentrancyGuar
     /// @notice Allows to stake on behalf of another address
     /// @param amount Amount to stake
     /// @param onBehalf Address to stake onBehalf of
-    function stakeOnBehalf(uint256 amount, address onBehalf)
-        external
-        nonReentrant
-        zeroCheck(onBehalf)
-        updateReward(onBehalf)
-    {
+    function stakeOnBehalf(
+        uint256 amount,
+        address onBehalf
+    ) external nonReentrant zeroCheck(onBehalf) updateReward(onBehalf) {
         _stake(amount, onBehalf);
     }
 
@@ -227,13 +220,9 @@ contract StakingRewards is StakingRewardsEvents, IStakingRewards, ReentrancyGuar
     /// @notice Adds rewards to be distributed
     /// @param reward Amount of reward tokens to distribute
     /// @dev This reward will be distributed during `rewardsDuration` set previously
-    function notifyRewardAmount(uint256 reward)
-        external
-        override
-        onlyRewardsDistribution
-        nonReentrant
-        updateReward(address(0))
-    {
+    function notifyRewardAmount(
+        uint256 reward
+    ) external override onlyRewardsDistribution nonReentrant updateReward(address(0)) {
         if (block.timestamp >= periodFinish) {
             // If no reward is currently being distributed, the new rate is just `reward / duration`
             rewardRate = reward / rewardsDuration;
@@ -261,11 +250,7 @@ contract StakingRewards is StakingRewardsEvents, IStakingRewards, ReentrancyGuar
     /// @param to Address to transfer to
     /// @param amount Amount to transfer
     /// @dev A use case would be to claim tokens if the staked tokens accumulate rewards
-    function recoverERC20(
-        address tokenAddress,
-        address to,
-        uint256 amount
-    ) external override onlyRewardsDistribution {
+    function recoverERC20(address tokenAddress, address to, uint256 amount) external override onlyRewardsDistribution {
         require(tokenAddress != address(stakingToken) && tokenAddress != address(rewardToken), "20");
 
         IERC20(tokenAddress).safeTransfer(to, amount);

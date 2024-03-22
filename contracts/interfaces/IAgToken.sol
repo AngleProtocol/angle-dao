@@ -13,11 +13,7 @@ interface IAgToken is IERC20Upgradeable {
     // ======================= `StableMaster` functions ============================
     function mint(address account, uint256 amount) external;
 
-    function burnFrom(
-        uint256 amount,
-        address burner,
-        address sender
-    ) external;
+    function burnFrom(uint256 amount, address burner, address sender) external;
 
     function burnSelf(uint256 amount, address burner) external;
 

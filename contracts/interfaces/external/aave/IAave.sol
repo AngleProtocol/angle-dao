@@ -8,22 +8,11 @@ import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 interface IAaveIncentivesController {
     function getRewardsBalance(address[] calldata assets, address user) external view returns (uint256);
 
-    function claimRewards(
-        address[] calldata assets,
-        uint256 amount,
-        address to
-    ) external returns (uint256);
+    function claimRewards(address[] calldata assets, uint256 amount, address to) external returns (uint256);
 
     function getDistributionEnd() external view returns (uint256);
 
-    function getAssetData(address asset)
-        external
-        view
-        returns (
-            uint256,
-            uint256,
-            uint256
-        );
+    function getAssetData(address asset) external view returns (uint256, uint256, uint256);
 }
 
 interface IAToken is IERC20 {
@@ -31,18 +20,9 @@ interface IAToken is IERC20 {
 }
 
 interface ILendingPool {
-    function deposit(
-        address asset,
-        uint256 amount,
-        address onBehalfOf,
-        uint16 referralCode
-    ) external;
+    function deposit(address asset, uint256 amount, address onBehalfOf, uint16 referralCode) external;
 
-    function withdraw(
-        address asset,
-        uint256 amount,
-        address to
-    ) external returns (uint256);
+    function withdraw(address asset, uint256 amount, address to) external returns (uint256);
 
     function getReserveData(address asset) external view returns (DataTypes.ReserveData memory);
 }
@@ -54,7 +34,9 @@ interface ILendingPoolAddressesProvider {
 interface IProtocolDataProvider {
     function ADDRESSES_PROVIDER() external view returns (ILendingPoolAddressesProvider);
 
-    function getReserveConfigurationData(address asset)
+    function getReserveConfigurationData(
+        address asset
+    )
         external
         view
         returns (
@@ -70,7 +52,9 @@ interface IProtocolDataProvider {
             bool isFrozen
         );
 
-    function getReserveData(address asset)
+    function getReserveData(
+        address asset
+    )
         external
         view
         returns (
@@ -95,14 +79,7 @@ interface IReserveInterestRateStrategy {
         uint256 totalVariableDebt,
         uint256 averageStableBorrowRate,
         uint256 reserveFactor
-    )
-        external
-        view
-        returns (
-            uint256 liquidityRate,
-            uint256 stableBorrowRate,
-            uint256 variableBorrowRate
-        );
+    ) external view returns (uint256 liquidityRate, uint256 stableBorrowRate, uint256 variableBorrowRate);
 }
 
 interface IStakedAave {
