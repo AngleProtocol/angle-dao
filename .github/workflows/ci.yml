@@ -81,6 +81,13 @@ jobs:
         with:
           version: nightly
 
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install vyper
+        run: pip install vyper==0.3.0
+
       - name: Run Foundry tests
         run: yarn test:unit
         env:
@@ -114,6 +121,13 @@ jobs:
         uses: foundry-rs/foundry-toolchain@v1
         with:
           version: nightly
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install vyper
+        run: pip install vyper==0.3.0
 
       - name: Run Foundry tests
         run: yarn test:invariant
@@ -151,6 +165,13 @@ jobs:
         with:
           version: nightly
 
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install vyper
+        run: pip install vyper==0.3.0
+
       - name: Run Foundry tests
         run: npm run test:fuzz
         env:
@@ -175,6 +196,13 @@ jobs:
 
       - name: "Install Foundry"
         uses: "foundry-rs/foundry-toolchain@v1"
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install vyper
+        run: pip install vyper==0.3.0
 
       - name: "Install lcov"
         run: "sudo apt-get install lcov"
