@@ -21,12 +21,10 @@ contract Fixture is Test, CommonUtils {
     function setUp() public virtual {
         uint256 CHAIN_SOURCE = CHAIN_ETHEREUM;
 
-        vm.createSelectFork("mainnet");
-
         vyperDeployer = new VyperDeployer();
-
         veANGLE = IveANGLE(vyperDeployer.deployContract("contracts/dao/veANGLE.vy"));
 
+        vm.createSelectFork("mainnet");
         IveANGLE forkedveANGLE = IveANGLE(_chainToContract(CHAIN_SOURCE, ContractType.veANGLE));
 
         admin = forkedveANGLE.admin();

@@ -2,7 +2,7 @@
 pragma solidity ^0.8.7;
 
 import "./BaseActor.t.sol";
-import { TimestampStore } from "../stores/TimestampStore.sol";
+import { TimestampStore } from "../stores/TimestampStore.t.sol";
 
 contract Param is BaseActor {
     TimestampStore public timestampStore;

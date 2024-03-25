@@ -16,6 +16,13 @@ interface IveANGLE is IERC20MetadataUpgradeable {
         uint256 blk;
     }
 
+    struct LockedBalance {
+        uint128 amount;
+        uint256 end;
+    }
+
+    function locked(address addr) external view returns (LockedBalance memory);
+
     function set_emergency_withdrawal() external;
 
     function emergency_withdrawal() external view returns (bool);
