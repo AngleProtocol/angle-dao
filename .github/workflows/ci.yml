@@ -45,7 +45,7 @@ jobs:
           version: nightly
 
       - name: Compile foundry
-        run: yarn compile --sizes
+        run: yarn compile
 
       - name: "Cache the build so that it can be re-used by the other jobs"
         uses: "actions/cache/save@v3"
