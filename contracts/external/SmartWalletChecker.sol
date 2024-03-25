@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity 0.8.7;
+pragma solidity ^0.8.7;
 
 /// @notice Interface of the `SmartWalletChecker` contracts of the protocol
 interface SmartWalletChecker {
