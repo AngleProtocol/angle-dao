@@ -189,7 +189,7 @@ def withdraw_fast():
     """
     @notice withdraw all tokens when in emergency states
     """
-    assert self.emergency_withdrawal
+    assert self.emergency_withdrawal, "Emergency withdrawal not enabled"
 
     _locked: LockedBalance = self.locked[msg.sender]
     value: uint256 = convert(_locked.amount, uint256)
