@@ -1,9 +1,10 @@
 # <img src=".github/assets/logo.svg" alt="Angle" height="40px"> Angle DAO
 
 [![CI](https://github.com/AngleProtocol/boilerplate/actions/workflows/ci.yml/badge.svg)](https://github.com/AngleProtocol/boilerplate/actions)
-[![Coverage](https://codecov.io/gh/AngleProtocol/boilerplate/branch/main/graph/badge.svg)](https://codecov.io/gh/AngleProtocol/boilerplate)
 
-This repository proposes a template that is based on foundry frameworks. It also provides templates for EVM compatible smart contracts (in `./contracts/example`), tests and deployment scripts.
+## Overview
+
+This repository contains all the contracts related to the Angle DAO including the angle, veANGLE ... etc.
 
 ## Starting
 
@@ -117,32 +118,6 @@ We recommend the use of this [vscode extension](ryanluker.vscode-coverage-gutter
 ```bash
 yarn hardhat:coverage
 yarn foundry:coverage
-```
-
-### Simulate
-
-You can simulate your transaction live or in fork mode. For both option you need to
-complete the `scripts/foundry/Simulate.s.sol` with your values: address sending the tx,
-address caled and the data to give to this address call.
-
-For live simulation
-
-```bash
-yarn foundry:simulate
-```
-
-For fork simulation
-
-```bash
-yarn foundry:fork
-yarn foundry:simulate:fork
-```
-
-For fork simulation at a given block
-
-```bash
-yarn foundry:fork:block ${XXXX}
-yarn foundry:simulate:fork
 ```
 
 ### Gas report
