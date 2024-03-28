@@ -61,4 +61,115 @@ contract EmergencyWithdrawal is Fixture {
         vm.expectRevert("Emergency withdrawal enabled");
         veANGLE.deposit_for(alice, 10e18);
     }
+
+    function test_emergencyWithdrawal_SingleLock() external {
+        deal(address(Angle), alice, 10e18);
+
+        vm.startPrank(alice, alice);
+        Angle.approve(address(veANGLE), 10e18);
+        veANGLE.create_lock(10e18, block.timestamp + 365 days);
+        vm.stopPrank();
+
+        assertEq(Angle.balanceOf(alice), 0);
+
+        vm.prank(admin);
+        veANGLE.set_emergency_withdrawal();
+
+        vm.prank(alice, alice);
+        veANGLE.withdraw_fast();
+
+        assertEq(Angle.balanceOf(alice), 10e18);
+    }
+
+    function test_emergencyWithdrawal_AfterLockExpired() external {
+        deal(address(Angle), alice, 10e18);
+
+        vm.startPrank(alice, alice);
+        Angle.approve(address(veANGLE), 10e18);
+        veANGLE.create_lock(10e18, block.timestamp + 365 days);
+        vm.stopPrank();
+
+        assertEq(Angle.balanceOf(alice), 0);
+
+        vm.prank(admin);
+        veANGLE.set_emergency_withdrawal();
+
+        vm.warp(block.timestamp + 365 days + 1);
+
+        vm.prank(alice, alice);
+        veANGLE.withdraw_fast();
+
+        assertEq(Angle.balanceOf(alice), 10e18);
+    }
+
+    function test_emergencyWithdrawal_MultipleLocks() external {
+        deal(address(Angle), alice, 10e18);
+        deal(address(Angle), bob, 20e18);
+
+        vm.startPrank(alice, alice);
+        Angle.approve(address(veANGLE), 10e18);
+        veANGLE.create_lock(10e18, block.timestamp + 365 days * 4);
+        vm.stopPrank();
+
+        vm.warp(block.timestamp + 365 days);
+
+        vm.startPrank(bob, bob);
+        Angle.approve(address(veANGLE), 20e18);
+        veANGLE.create_lock(20e18, block.timestamp + 365 days * 2);
+        vm.stopPrank();
+
+        assertEq(Angle.balanceOf(alice), 0);
+        assertEq(Angle.balanceOf(bob), 0);
+
+        vm.prank(admin);
+        veANGLE.set_emergency_withdrawal();
+
+        vm.prank(alice, alice);
+        veANGLE.withdraw_fast();
+
+        assertEq(Angle.balanceOf(alice), 10e18);
+
+        vm.warp(block.timestamp + 365 days);
+
+        vm.prank(bob, bob);
+        veANGLE.withdraw_fast();
+
+        assertEq(Angle.balanceOf(bob), 20e18);
+    }
+
+    function test_emergencyWithdrawal_CannotWithdrawTwice() external {
+        deal(address(Angle), alice, 10e18);
+
+        vm.startPrank(alice, alice);
+        Angle.approve(address(veANGLE), 10e18);
+        veANGLE.create_lock(10e18, block.timestamp + 365 days);
+        vm.stopPrank();
+
+        assertEq(Angle.balanceOf(alice), 0);
+
+        vm.prank(admin);
+        veANGLE.set_emergency_withdrawal();
+
+        vm.prank(alice, alice);
+        veANGLE.withdraw_fast();
+
+        assertEq(Angle.balanceOf(alice), 10e18);
+
+        vm.prank(alice, alice);
+        veANGLE.withdraw_fast();
+
+        assertEq(Angle.balanceOf(alice), 10e18);
+    }
+
+    function test_emergencyWithdrawal_CannotWithdrawWhenNoEmergency() external {
+        deal(address(Angle), alice, 20e18);
+
+        vm.startPrank(alice, alice);
+        Angle.approve(address(veANGLE), 20e18);
+        veANGLE.create_lock(10e18, block.timestamp + 365 days);
+        vm.stopPrank();
+
+        vm.expectRevert("Emergency withdrawal not enabled");
+        veANGLE.withdraw_fast();
+    }
 }
