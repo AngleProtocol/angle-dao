@@ -181,11 +181,12 @@ contract RewardsDistributor is RewardsDistributorEvents, IRewardsDistributor, Ac
     /// @param _stakingContract Address of the staking contract
     /// @param _duration Time frame during which tokens will be distributed
     /// @param _incentiveAmount Incentive amount given to keepers calling the update function
-    /// @param _updateFrequency Frequency when it is possible to call the update function and give tokens to the staking contract
+    /// @param _updateFrequency Frequency when it is possible to call the update function and give tokens to the
+    /// staking contract
     /// @param _amountToDistribute Amount of gov tokens to give to the staking contract across all drips
     /// @dev Called by governance to activate a contract
-    /// @dev After setting a new staking contract, everything is as if the contract had already been set for `_updateFrequency`
-    /// meaning that it is possible to `drip` the staking contract immediately after that
+    /// @dev After setting a new staking contract, everything is as if the contract had already been set for
+    /// `_updateFrequency` meaning that it is possible to `drip` the staking contract immediately after that
     function setStakingContract(
         address _stakingContract,
         uint256 _duration,

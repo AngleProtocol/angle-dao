@@ -260,8 +260,8 @@ contract StakingRewards is StakingRewardsEvents, IStakingRewards, ReentrancyGuar
     /// @notice Changes the rewards distributor associated to this contract
     /// @param _rewardsDistribution Address of the new rewards distributor contract
     /// @dev This function was also added by Angle Core Team
-    /// @dev A compatibility check of the reward token is already performed in the current `RewardsDistributor` implementation
-    /// which has right to call this function
+    /// @dev A compatibility check of the reward token is already performed in the current `RewardsDistributor`
+    /// implementation which has right to call this function
     function setNewRewardsDistribution(address _rewardsDistribution) external override onlyRewardsDistribution {
         rewardsDistribution = _rewardsDistribution;
         emit RewardsDistributionUpdated(_rewardsDistribution);
