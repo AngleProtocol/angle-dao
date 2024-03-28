@@ -2,7 +2,6 @@
 pragma solidity ^0.8.7;
 
 import { Fixture, IveANGLE } from "../Fixture.t.sol";
-import { console } from "forge-std/console.sol";
 
 contract EmergencyWithdrawal is Fixture {
     function test_emergencyWithdrawal_Normal() external {
