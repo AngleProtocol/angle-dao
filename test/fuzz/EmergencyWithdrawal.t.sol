@@ -5,19 +5,11 @@ import { Fixture, IveANGLE } from "../Fixture.t.sol";
 import { console } from "forge-std/console.sol";
 
 contract EmergencyWithdrawalFuzz is Fixture {
-    function test_emergencyWithdrawal_Normal(
-        address[10] memory accounts,
-        uint256[10] memory balances,
-        uint256[10] memory durations
-    ) external {
-        // be sure all accounts are unique
+    function test_emergencyWithdrawalFuzz_Normal(uint256[10] memory balances, uint256[10] memory durations) external {
+        address[] memory accounts = new address[](balances.length);
         for (uint i = 0; i < accounts.length; i++) {
-            vm.assume(accounts[i] != address(0));
-            for (uint j = i + 1; j < accounts.length; j++) {
-                vm.assume(accounts[i] != accounts[j]);
-            }
+            accounts[i] = address(uint160(uint256(keccak256(abi.encodePacked("account", i)))));
         }
-
         for (uint i = 0; i < accounts.length; i++) {
             durations[i] = bound(durations[i], 1 weeks, 365 days * 4);
             balances[i] = bound(balances[i], 1e18, 1e22);
@@ -47,25 +39,20 @@ contract EmergencyWithdrawalFuzz is Fixture {
         }
     }
 
-    function test_emergencyWithdrawal_WithTimeWraps(
-        address[10] memory accounts,
+    function test_emergencyWithdrawalFuzz_WithTimeWraps(
         uint256[10] memory balances,
         uint256[10] memory durations,
         uint256[10] memory timeWraps
     ) external {
-        // be sure all accounts are unique
+        address[] memory accounts = new address[](balances.length);
         for (uint i = 0; i < accounts.length; i++) {
-            vm.assume(accounts[i] != address(0));
-            for (uint j = i + 1; j < accounts.length; j++) {
-                vm.assume(accounts[i] != accounts[j]);
-            }
+            accounts[i] = address(uint160(uint256(keccak256(abi.encodePacked("account", i)))));
         }
 
         for (uint i = 0; i < accounts.length; i++) {
             durations[i] = bound(durations[i], 1 weeks, 365 days * 4);
             balances[i] = bound(balances[i], 1e18, 1e22);
             deal(address(Angle), accounts[i], balances[i]);
-
             vm.startPrank(accounts[i], accounts[i]);
             Angle.approve(address(veANGLE), balances[i]);
             veANGLE.create_lock(balances[i], block.timestamp + durations[i]);
