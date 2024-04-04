@@ -5,7 +5,6 @@ struct Lock {
     uint256 amount;
     uint256 unlockTime;
     uint256 timestamp;
-    uint256 start;
 }
 
 contract LockStore {
@@ -14,11 +13,7 @@ contract LockStore {
     constructor() {}
 
     function addLock(address account, uint256 amount, uint256 unlockTime, uint256 timestamp) external {
-        locks[account].push(Lock(amount, unlockTime, timestamp, timestamp));
-    }
-
-    function addLock(address account, uint256 amount, uint256 unlockTime, uint256 timestamp, uint256 start) external {
-        locks[account].push(Lock(amount, unlockTime, timestamp, start));
+        locks[account].push(Lock(amount, unlockTime, timestamp));
     }
 
     function getLatestLock(address account) external view returns (Lock memory) {

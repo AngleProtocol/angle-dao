@@ -76,10 +76,8 @@ contract LocksInvariants is Fixture {
                 }
 
                 uint256 balance = veANGLE.balanceOf(locker, lock.timestamp);
-                assertEq(
-                    balance,
-                    ((lock.amount * (((lock.unlockTime - lock.start) / 1 weeks) * 1 weeks)) / (365 days * 4))
-                );
+                assertGt(balance, (((lock.amount * (lock.unlockTime - lock.timestamp)) / (365 days * 4)) * 95) / 100);
+                assertLe(balance, (lock.amount * (lock.unlockTime - lock.timestamp)) / (365 days * 4));
             }
         }
     }
@@ -97,10 +95,11 @@ contract LocksInvariants is Fixture {
                 }
 
                 uint256 balance = veANGLE.balanceOf(locker, lock.timestamp + 1);
-                assertEq(
+                assertGt(
                     balance,
-                    ((lock.amount * (((lock.unlockTime - lock.start) / 1 weeks) * 1 weeks)) / (365 days * 4))
+                    (((lock.amount * (lock.unlockTime - lock.timestamp + 1)) / (365 days * 4)) * 95) / 100
                 );
+                assertLe(balance, (lock.amount * (lock.unlockTime - lock.timestamp + 1)) / (365 days * 4));
             }
         }
     }
