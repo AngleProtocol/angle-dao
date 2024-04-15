@@ -31,10 +31,12 @@ contract EmergencyWithdrawalFuzz is Fixture {
         for (uint i = 0; i < accounts.length; i++) {
             assertEq(Angle.balanceOf(accounts[i]), 0);
 
-            vm.startPrank(accounts[i]);
+            vm.prank(accounts[i]);
             veANGLE.withdraw_fast();
-            vm.stopPrank();
+            assertEq(Angle.balanceOf(accounts[i]), balances[i]);
 
+            vm.prank(accounts[i]);
+            veANGLE.withdraw_fast();
             assertEq(Angle.balanceOf(accounts[i]), balances[i]);
         }
     }
@@ -72,10 +74,12 @@ contract EmergencyWithdrawalFuzz is Fixture {
 
             vm.warp(block.timestamp + timeWraps[i]);
 
-            vm.startPrank(accounts[i]);
+            vm.prank(accounts[i]);
             veANGLE.withdraw_fast();
-            vm.stopPrank();
+            assertEq(Angle.balanceOf(accounts[i]), balances[i]);
 
+            vm.prank(accounts[i]);
+            veANGLE.withdraw_fast();
             assertEq(Angle.balanceOf(accounts[i]), balances[i]);
         }
     }
