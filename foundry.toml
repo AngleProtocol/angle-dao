@@ -35,16 +35,7 @@ bsc = "${ETH_NODE_URI_BSC}"
 base = "${ETH_NODE_URI_BASE}"
 
 [etherscan]
-arbitrum = { key = "${ARBITRUM_ETHERSCAN_API_KEY}" }
-gnosis = { key = "${GNOSIS_ETHERSCAN_API_KEY}" , url = "https://api.gnosisscan.io/api"}
-mainnet = { key = "${MAINNET_ETHERSCAN_API_KEY}" }
-optimism = { key = "${OPTIMISM_ETHERSCAN_API_KEY}" }
-polygon = { key = "${POLYGON_ETHERSCAN_API_KEY}" }
-avalanche = { key = "${AVALANCHE_ETHERSCAN_API_KEY}" }
-celo = { key = "${CELO_ETHERSCAN_API_KEY}", url = "https://api.celoscan.io/api" }
-base = { key = "${BASE_ETHERSCAN_API_KEY}", url = "https://api.basescan.org/api" }
-polygonzkevm = { key = "${POLYGONZKEVM_ETHERSCAN_API_KEY}", url = "https://api-zkevm.polygonscan.com/api" }
-bsc = { key = "${BSC_ETHERSCAN_API_KEY}"}
+
 
 [profile.dev]
 optimizer = true
@@ -56,8 +47,8 @@ gas_reports = ["*"]
 runs = 2000
 
 [profile.dev.invariant]
-runs = 10
-depth = 1
+runs = 100
+depth = 10
 fail_on_revert = true
 
 [profile.ci]
