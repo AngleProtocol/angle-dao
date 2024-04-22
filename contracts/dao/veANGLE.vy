@@ -1,4 +1,4 @@
-# @version 0.3.0
+# @version 0.2.16
 """
 @title Voting Escrow
 @author Angle Protocol
@@ -184,7 +184,6 @@ def set_emergency_withdrawal():
     self.emergency_withdrawal = True
 
 @external
-@nonreentrant('lock')
 def withdraw_fast():
     """
     @notice withdraw all tokens when in emergency states
@@ -571,18 +570,18 @@ def _find_user_timestamp_epoch(addr: address, ts: uint256) -> uint256:
     @param ts Epoch time to find
     @return User epoch number
     """
-    min_value: uint256 = 0
-    max_value: uint256 = self.user_point_epoch[addr]
+    minimum_value: uint256 = 0
+    maximum_value: uint256 = self.user_point_epoch[addr]
 
     for i in range(128):  # Will be always enough for 128-bit numbers
-        if min_value >= max_value:
+        if minimum_value >= maximum_value:
             break
-        mid: uint256 = (min_value + max_value + 1) / 2
+        mid: uint256 = (minimum_value + maximum_value + 1) / 2
         if self.user_point_history[addr][mid].ts <= ts:
-            min_value = mid
+            minimum_value = mid
         else:
-            max_value = mid - 1
-    return min_value
+            maximum_value = mid - 1
+    return minimum_value
 
 @external
 @view
