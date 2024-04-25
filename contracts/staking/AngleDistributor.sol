@@ -27,7 +27,7 @@ contract AngleDistributor is AngleDistributorEvents, ReentrancyGuardUpgradeable,
     uint256 public constant RATE_REDUCTION_COEFFICIENT = 1007827884862117171; // 1.5 ^ (1/52) * 10**18
 
     /// @notice Base used for computation
-    uint256 public constant BASE = 10**18;
+    uint256 public constant BASE = 10 ** 18;
 
     /// @notice Maps the address of a gauge to the last time this gauge received rewards
     mapping(address => uint256) public lastTimeGaugePaid;
@@ -123,8 +123,8 @@ contract AngleDistributor is AngleDistributorEvents, ReentrancyGuardUpgradeable,
     /// @dev The reason for having an internal function is that it's called by the `distributeReward` and the
     /// `distributeRewardToMultipleGauges`
     /// @dev Although they would need to be performed all the time this function is called, this function does not
-    /// contain checks on whether distribution is on, and on whether rate should be reduced. These are done in each external
-    /// function calling this function for gas efficiency
+    /// contain checks on whether distribution is on, and on whether rate should be reduced. These are done in
+    /// each external function calling this function for gas efficiency
     function _distributeReward(address gaugeAddr) internal returns (uint256 weeksElapsed, uint256 rewardTally) {
         // Checking if the gauge has been added or if it still possible to distribute rewards to this gauge
         int128 gaugeType = IGaugeController(controller).gauge_types(gaugeAddr);
@@ -164,8 +164,8 @@ contract AngleDistributor is AngleDistributorEvents, ReentrancyGuardUpgradeable,
             rewardTally += (weeklyRate * relWeightAtWeek * WEEK) / BASE;
 
             // To get the rate of the week prior from the current rate we just have to multiply by the weekly division
-            // factor
-            // There may be some precisions error: inferred previous values of the rate may be different to what we would
+            // factor. There may be some
+            // precisions error: inferred previous values of the rate may be different to what we would
             // have had if the rate had been computed correctly in these weeks: we expect from empirical observations
             // this `weeklyRate` to be inferior to what the `rate` would have been
             weeklyRate = (weeklyRate * RATE_REDUCTION_COEFFICIENT) / BASE;
@@ -290,11 +290,7 @@ contract AngleDistributor is AngleDistributorEvents, ReentrancyGuardUpgradeable,
     /// @dev Added to support recovering LP Rewards and other mistaken tokens
     /// from other systems to be distributed to holders
     /// @dev This function could also be used to recover ANGLE tokens in case the rate got smaller
-    function recoverERC20(
-        address tokenAddress,
-        address to,
-        uint256 amount
-    ) external onlyRole(GOVERNOR_ROLE) {
+    function recoverERC20(address tokenAddress, address to, uint256 amount) external onlyRole(GOVERNOR_ROLE) {
         // If the token is the ANGLE token, we need to make sure that governance is not going to withdraw
         // too many tokens and that it'll be able to sustain the weekly distribution forever
         // This check assumes that `distributeReward` has been called for gauges and that there are no gauges
@@ -326,9 +322,10 @@ contract AngleDistributor is AngleDistributorEvents, ReentrancyGuardUpgradeable,
     /// @param _delegateGauge Address of the new gauge delegate related to `gaugeAddr`
     /// @param toggleInterface Whether we should toggle the fact that the `_delegateGauge` is built for automation or not
     /// @dev This function can be used to remove delegating or introduce the pulling of rewards to a given address
-    /// @dev If `gaugeAddr` is the zero address, this function updates the delegate gauge common to all gauges with type >= 2
-    /// @dev The `toggleInterface` parameter has been added for convenience to save one transaction when adding a gauge delegate
-    /// which supports the `notifyReward` interface
+    /// @dev If `gaugeAddr` is the zero address, this function updates the delegate gauge common to all gauges
+    /// with type >= 2
+    /// @dev The `toggleInterface` parameter has been added for convenience to save one transaction when adding
+    /// a gauge delegate which supports the `notifyReward` interface
     function setDelegateGauge(
         address gaugeAddr,
         address _delegateGauge,
@@ -349,12 +346,12 @@ contract AngleDistributor is AngleDistributorEvents, ReentrancyGuardUpgradeable,
     /// @notice Changes the ANGLE emission rate
     /// @param _newRate New ANGLE emission rate
     /// @dev It is important to be super wary when calling this function and to make sure that `distributeReward`
-    /// has been called for all gauges in the past weeks. If not, gauges may get an incorrect distribution of ANGLE rewards
-    /// for these past weeks based on the new rate and not on the old rate
-    /// @dev Governance should thus make sure to call this function rarely and when it does to do it after the weekly `distributeReward`
-    /// calls for all existing gauges
-    /// @dev As this function assumes that `distributeReward` has been called during the week, it also assumes that the `startEpochSupply`
-    /// parameter has been put up to date
+    /// has been called for all gauges in the past weeks. If not, gauges may get an incorrect distribution
+    /// of ANGLE rewards for these past weeks based on the new rate and not on the old rate
+    /// @dev Governance should thus make sure to call this function rarely and when it does to do it after the weekly
+    /// `distributeReward` calls for all existing gauges
+    /// @dev As this function assumes that `distributeReward` has been called during the week, it also assumes that
+    /// the `startEpochSupply` parameter has been put up to date
     function setRate(uint256 _newRate) external onlyRole(GOVERNOR_ROLE) {
         // Checking if the new rate is compatible with the amount of ANGLE tokens this contract has in balance
         // This check assumes, like this function, that `distributeReward` has correctly been called before
@@ -371,13 +368,13 @@ contract AngleDistributor is AngleDistributorEvents, ReentrancyGuardUpgradeable,
     /// @param gaugeAddr Gauge to toggle the status of
     /// @dev It is impossible to kill a gauge in the `GaugeController` contract, for this reason killing of gauges
     /// takes place in the `AngleDistributor` contract
-    /// @dev This means that people could vote for a gauge in the gauge controller contract but that rewards are not going
-    /// to be distributed to it in the end: people would need to remove their weights on the gauge killed to end the diminution
-    /// in rewards
-    /// @dev In the case of a gauge being killed, this function resets the timestamps at which this gauge has been approved and
-    /// disapproves the gauge to spend the token
-    /// @dev It should be cautiously called by governance as it could result in less ANGLE overall rewards than initially planned
-    /// if people do not remove their voting weights to the killed gauge
+    /// @dev This means that people could vote for a gauge in the gauge controller contract but that rewards are
+    /// not going to be distributed to it in the end: people would need to remove their weights on the gauge killed
+    /// to end the diminution in rewards
+    /// @dev In the case of a gauge being killed, this function resets the timestamps at which this gauge has been
+    /// approved and disapproves the gauge to spend the token
+    /// @dev It should be cautiously called by governance as it could result in less ANGLE overall rewards than
+    /// initially planned if people do not remove their voting weights to the killed gauge
     function toggleGauge(address gaugeAddr) external onlyRole(GOVERNOR_ROLE) {
         bool gaugeKilledMem = killedGauges[gaugeAddr];
         if (!gaugeKilledMem) {

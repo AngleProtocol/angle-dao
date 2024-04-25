@@ -7,10 +7,5 @@ import "./CTokenI.sol";
 interface IComptroller {
     function compSupplySpeeds(address cToken) external view returns (uint256);
 
-    function claimComp(
-        address[] memory holders,
-        CTokenI[] memory cTokens,
-        bool borrowers,
-        bool suppliers
-    ) external;
+    function claimComp(address[] memory holders, CTokenI[] memory cTokens, bool borrowers, bool suppliers) external;
 }

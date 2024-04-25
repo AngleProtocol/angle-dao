@@ -74,11 +74,7 @@ struct SLPData {
 /// @author Angle Core Team
 /// @notice Interface for the `StableMaster` contract
 interface IStableMasterFunctions {
-    function deploy(
-        address[] memory _governorList,
-        address _guardian,
-        address _agToken
-    ) external;
+    function deploy(address[] memory _governorList, address _guardian, address _agToken) external;
 
     // ============================== Lending ======================================
 
@@ -96,12 +92,7 @@ interface IStableMasterFunctions {
 
     function getCollateralRatio() external returns (uint256);
 
-    function setFeeKeeper(
-        uint64 feeMint,
-        uint64 feeBurn,
-        uint64 _slippage,
-        uint64 _slippageFee
-    ) external;
+    function setFeeKeeper(uint64 feeMint, uint64 feeBurn, uint64 _slippage, uint64 _slippageFee) external;
 
     // ============================== AgToken ======================================
 
@@ -125,18 +116,9 @@ interface IStableMasterFunctions {
         IPoolManager poolManager
     ) external;
 
-    function setIncentivesForSLPs(
-        uint64 _feesForSLPs,
-        uint64 _interestsForSLPs,
-        IPoolManager poolManager
-    ) external;
+    function setIncentivesForSLPs(uint64 _feesForSLPs, uint64 _interestsForSLPs, IPoolManager poolManager) external;
 
-    function setUserFees(
-        IPoolManager poolManager,
-        uint64[] memory _xFee,
-        uint64[] memory _yFee,
-        uint8 _mint
-    ) external;
+    function setUserFees(IPoolManager poolManager, uint64[] memory _xFee, uint64[] memory _yFee, uint8 _mint) external;
 
     function setTargetHAHedge(uint64 _targetHAHedge) external;
 
@@ -151,7 +133,9 @@ interface IStableMasterFunctions {
 interface IStableMaster is IStableMasterFunctions {
     function agToken() external view returns (address);
 
-    function collateralMap(IPoolManager poolManager)
+    function collateralMap(
+        IPoolManager poolManager
+    )
         external
         view
         returns (

@@ -116,7 +116,15 @@ future_admin: public(address)
 
 initialized: public(bool)
 
-emergency_withdrawal: public(bool)
+
+@external
+def __init__():
+    """
+    @notice Contract constructor
+    @dev The contract has an initializer to prevent the take over of the implementation
+    """
+    assert self.initialized == False #dev: contract is already initialized
+    self.initialized = True
 
 @external
 def initialize(_admin: address, token_addr: address, _smart_wallet_checker: address, _name: String[64], _symbol: String[32]):
@@ -178,28 +186,6 @@ def apply_transfer_ownership():
     self.admin = _admin
     log ApplyOwnership(_admin)
 
-@external
-def set_emergency_withdrawal():
-    assert msg.sender == self.admin
-    self.emergency_withdrawal = True
-
-@external
-def withdraw_fast():
-    """
-    @notice withdraw all tokens when in emergency states
-    """
-    assert self.emergency_withdrawal, "Emergency withdrawal not enabled"
-
-    _locked: LockedBalance = self.locked[msg.sender]
-    value: uint256 = convert(_locked.amount, uint256)
-
-    # remove lock
-    self.locked[msg.sender].end = 0
-    self.locked[msg.sender].amount = 0
-
-    assert ERC20(self.token).transfer(msg.sender, value)
-
-    log Withdraw(msg.sender, value, block.timestamp)
 
 @external
 def commit_smart_wallet_checker(addr: address):
@@ -385,6 +371,7 @@ def _checkpoint(addr: address, old_locked: LockedBalance, new_locked: LockedBala
         u_new.blk = block.number
         self.user_point_history[addr][user_epoch] = u_new
 
+
 @internal
 def _deposit_for(_addr: address, _value: uint256, unlock_time: uint256, locked_balance: LockedBalance, type: int128, sender: address):
     """
@@ -423,8 +410,8 @@ def checkpoint():
     """
     @notice Record global data to checkpoint
     """
-    assert not self.emergency_withdrawal, "Emergency withdrawal enabled"
     self._checkpoint(ZERO_ADDRESS, empty(LockedBalance), empty(LockedBalance))
+
 
 @external
 @nonreentrant('lock')
@@ -436,7 +423,6 @@ def deposit_for(_addr: address, _value: uint256):
     @param _addr User's wallet address
     @param _value Amount to add to user's lock
     """
-    assert not self.emergency_withdrawal, "Emergency withdrawal enabled"
     _locked: LockedBalance = self.locked[_addr]
 
     assert _value > 0  # dev: need non-zero value
@@ -444,6 +430,7 @@ def deposit_for(_addr: address, _value: uint256):
     assert _locked.end > block.timestamp, "Cannot add to expired lock. Withdraw"
 
     self._deposit_for(_addr, _value, 0, self.locked[_addr], DEPOSIT_FOR_TYPE, msg.sender)
+
 
 @external
 @nonreentrant('lock')
@@ -453,7 +440,6 @@ def create_lock(_value: uint256, _unlock_time: uint256):
     @param _value Amount to deposit
     @param _unlock_time Epoch time when tokens unlock, rounded down to whole weeks
     """
-    assert not self.emergency_withdrawal, "Emergency withdrawal enabled"
     self.assert_not_contract(msg.sender)
     unlock_time: uint256 = (_unlock_time / WEEK) * WEEK  # Locktime is rounded down to weeks
     _locked: LockedBalance = self.locked[msg.sender]
@@ -474,7 +460,6 @@ def increase_amount(_value: uint256):
             without modifying the unlock time
     @param _value Amount of tokens to deposit and add to the lock
     """
-    assert not self.emergency_withdrawal, "Emergency withdrawal enabled"
     self.assert_not_contract(msg.sender)
     _locked: LockedBalance = self.locked[msg.sender]
 
@@ -492,7 +477,6 @@ def increase_unlock_time(_unlock_time: uint256):
     @notice Extend the unlock time for `msg.sender` to `_unlock_time`
     @param _unlock_time New epoch time for unlocking
     """
-    assert not self.emergency_withdrawal, "Emergency withdrawal enabled"
     self.assert_not_contract(msg.sender)
     _locked: LockedBalance = self.locked[msg.sender]
     unlock_time: uint256 = (_unlock_time / WEEK) * WEEK  # Locktime is rounded down to weeks
@@ -512,7 +496,6 @@ def withdraw():
     @notice Withdraw all tokens for `msg.sender`
     @dev Only possible if the lock has expired
     """
-    assert not self.emergency_withdrawal, "Emergency withdrawal enabled"
     _locked: LockedBalance = self.locked[msg.sender]
     assert block.timestamp >= _locked.end, "The lock didn't expire"
     value: uint256 = convert(_locked.amount, uint256)
@@ -561,58 +544,27 @@ def find_block_epoch(_block: uint256, max_epoch: uint256) -> uint256:
             _max = _mid - 1
     return _min
 
-@internal
-@view
-def _find_user_timestamp_epoch(addr: address, ts: uint256) -> uint256:
-    """
-    @notice Find the epoch for a user's timestamp
-    @param addr User wallet address
-    @param ts Epoch time to find
-    @return User epoch number
-    """
-    minimum_value: uint256 = 0
-    maximum_value: uint256 = self.user_point_epoch[addr]
-
-    for i in range(128):  # Will be always enough for 128-bit numbers
-        if minimum_value >= maximum_value:
-            break
-        mid: uint256 = (minimum_value + maximum_value + 1) / 2
-        if self.user_point_history[addr][mid].ts <= ts:
-            minimum_value = mid
-        else:
-            maximum_value = mid - 1
-    return minimum_value
 
 @external
 @view
-def find_user_timestamp_epoch(addr: address, ts: uint256) -> uint256:
-    """
-    @notice Find the epoch for a user's timestamp
-    @param addr User wallet address
-    @param ts Epoch time to find
-    @return User epoch number
-    """
-    return self._find_user_timestamp_epoch(addr, ts)
-
-@external
-@view
-def balanceOf(addr: address, ts: uint256 = block.timestamp) -> uint256:
+def balanceOf(addr: address, _t: uint256 = block.timestamp) -> uint256:
     """
     @notice Get the current voting power for `msg.sender`
     @dev Adheres to the ERC20 `balanceOf` interface for Aragon compatibility
     @param addr User wallet address
-    @param ts Epoch time to return voting power at
+    @param _t Epoch time to return voting power at
     @return User voting power
     """
-    _epoch: uint256 = self._find_user_timestamp_epoch(addr, ts)
+    _epoch: uint256 = self.user_point_epoch[addr]
     if _epoch == 0:
         return 0
     else:
         last_point: Point = self.user_point_history[addr][_epoch]
-        last_point.bias -= last_point.slope * convert(ts - last_point.ts, int128)
+        last_point.bias -= last_point.slope * convert(_t - last_point.ts, int128)
         if last_point.bias < 0:
             last_point.bias = 0
         return convert(last_point.bias, uint256)
+
 
 @internal
 @view

@@ -56,11 +56,7 @@ contract RewardsDistributor is RewardsDistributorEvents, IRewardsDistributor, Ac
     /// @param governorList List of the governor addresses of the protocol
     /// @param guardian The guardian address, optional
     /// @param rewardTokenAddress The ERC20 token to distribute
-    constructor(
-        address[] memory governorList,
-        address guardian,
-        address rewardTokenAddress
-    ) {
+    constructor(address[] memory governorList, address guardian, address rewardTokenAddress) {
         require(rewardTokenAddress != address(0) && guardian != address(0), "0");
         require(governorList.length > 0, "47");
         rewardToken = IERC20(rewardTokenAddress);
@@ -185,11 +181,12 @@ contract RewardsDistributor is RewardsDistributorEvents, IRewardsDistributor, Ac
     /// @param _stakingContract Address of the staking contract
     /// @param _duration Time frame during which tokens will be distributed
     /// @param _incentiveAmount Incentive amount given to keepers calling the update function
-    /// @param _updateFrequency Frequency when it is possible to call the update function and give tokens to the staking contract
+    /// @param _updateFrequency Frequency when it is possible to call the update function and give tokens to the
+    /// staking contract
     /// @param _amountToDistribute Amount of gov tokens to give to the staking contract across all drips
     /// @dev Called by governance to activate a contract
-    /// @dev After setting a new staking contract, everything is as if the contract had already been set for `_updateFrequency`
-    /// meaning that it is possible to `drip` the staking contract immediately after that
+    /// @dev After setting a new staking contract, everything is as if the contract had already been set for
+    /// `_updateFrequency` meaning that it is possible to `drip` the staking contract immediately after that
     function setStakingContract(
         address _stakingContract,
         uint256 _duration,
@@ -222,11 +219,10 @@ contract RewardsDistributor is RewardsDistributorEvents, IRewardsDistributor, Ac
     /// @notice Sets the update frequency
     /// @param _updateFrequency New update frequency
     /// @param stakingContract Reference to the staking contract
-    function setUpdateFrequency(uint256 _updateFrequency, IStakingRewards stakingContract)
-        external
-        override
-        onlyRole(GUARDIAN_ROLE)
-    {
+    function setUpdateFrequency(
+        uint256 _updateFrequency,
+        IStakingRewards stakingContract
+    ) external override onlyRole(GUARDIAN_ROLE) {
         StakingParameters storage stakingParams = stakingContractsMap[stakingContract];
         require(stakingParams.duration > 0, "80");
         require(stakingParams.duration >= _updateFrequency, "87");
@@ -237,11 +233,10 @@ contract RewardsDistributor is RewardsDistributorEvents, IRewardsDistributor, Ac
     /// @notice Sets the incentive amount for calling drip
     /// @param _incentiveAmount New incentive amount
     /// @param stakingContract Reference to the staking contract
-    function setIncentiveAmount(uint256 _incentiveAmount, IStakingRewards stakingContract)
-        external
-        override
-        onlyRole(GUARDIAN_ROLE)
-    {
+    function setIncentiveAmount(
+        uint256 _incentiveAmount,
+        IStakingRewards stakingContract
+    ) external override onlyRole(GUARDIAN_ROLE) {
         StakingParameters storage stakingParams = stakingContractsMap[stakingContract];
         require(stakingParams.duration > 0, "80");
         stakingParams.incentiveAmount = _incentiveAmount;
@@ -251,11 +246,10 @@ contract RewardsDistributor is RewardsDistributorEvents, IRewardsDistributor, Ac
     /// @notice Sets the new amount to distribute to a staking contract
     /// @param _amountToDistribute New amount to distribute
     /// @param stakingContract Reference to the staking contract
-    function setAmountToDistribute(uint256 _amountToDistribute, IStakingRewards stakingContract)
-        external
-        override
-        onlyRole(GUARDIAN_ROLE)
-    {
+    function setAmountToDistribute(
+        uint256 _amountToDistribute,
+        IStakingRewards stakingContract
+    ) external override onlyRole(GUARDIAN_ROLE) {
         StakingParameters storage stakingParams = stakingContractsMap[stakingContract];
         require(stakingParams.duration > 0, "80");
         require(stakingParams.distributedRewards < _amountToDistribute, "88");

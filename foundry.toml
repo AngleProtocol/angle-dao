@@ -6,19 +6,20 @@ libs = ["lib"]
 script = "scripts"
 cache_path = "cache"
 gas_reports = ["*"]
-via_ir = true
 sizes = true
 optimizer = true
 optimizer_runs = 1000
-solc_version = "0.8.7"
+solc_version = "0.8.22"
 ffi = true
+via_ir = true
 
 [fuzz]
 runs = 10000
 
 [invariant]
-runs = 1000
-depth = 30
+runs = 10
+depth = 100
+fail_on_revert = true
 
 [rpc_endpoints]
 arbitrum = "${ETH_NODE_URI_ARBITRUM}"
@@ -34,16 +35,7 @@ bsc = "${ETH_NODE_URI_BSC}"
 base = "${ETH_NODE_URI_BASE}"
 
 [etherscan]
-arbitrum = { key = "${ARBITRUM_ETHERSCAN_API_KEY}" }
-gnosis = { key = "${GNOSIS_ETHERSCAN_API_KEY}" , url = "https://api.gnosisscan.io/api"}
-mainnet = { key = "${MAINNET_ETHERSCAN_API_KEY}" }
-optimism = { key = "${OPTIMISM_ETHERSCAN_API_KEY}" }
-polygon = { key = "${POLYGON_ETHERSCAN_API_KEY}" }
-avalanche = { key = "${AVALANCHE_ETHERSCAN_API_KEY}" }
-celo = { key = "${CELO_ETHERSCAN_API_KEY}", url = "https://api.celoscan.io/api" }
-base = { key = "${BASE_ETHERSCAN_API_KEY}", url = "https://api.basescan.org/api" }
-polygonzkevm = { key = "${POLYGONZKEVM_ETHERSCAN_API_KEY}", url = "https://api-zkevm.polygonscan.com/api" }
-bsc = { key = "${BSC_ETHERSCAN_API_KEY}"}
+
 
 [profile.dev]
 optimizer = true
@@ -55,9 +47,9 @@ gas_reports = ["*"]
 runs = 2000
 
 [profile.dev.invariant]
-runs = 10
-depth = 1
-fail_on_revert = false
+runs = 100
+depth = 10
+fail_on_revert = true
 
 [profile.ci]
 src = "test"
@@ -70,4 +62,4 @@ runs = 100
 [profile.ci.invariant]
 runs = 10
 depth = 30
-fail_on_revert = false
+fail_on_revert = true

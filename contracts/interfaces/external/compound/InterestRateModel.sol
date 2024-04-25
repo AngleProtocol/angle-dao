@@ -19,9 +19,5 @@ interface InterestRateModel {
     ) external view returns (uint256);
 
     // Rinkeby function
-    function getBorrowRate(
-        uint256 cash,
-        uint256 borrows,
-        uint256 _reserves
-    ) external view returns (uint256, uint256);
+    function getBorrowRate(uint256 cash, uint256 borrows, uint256 _reserves) external view returns (uint256, uint256);
 }
