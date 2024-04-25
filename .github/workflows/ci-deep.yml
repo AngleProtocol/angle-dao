@@ -106,7 +106,7 @@ jobs:
           python-version: '3.8'
 
       - name: Install vyper
-        run: pip install vyper==0.3.0
+        run: pip install vyper==0.2.16
 
       - name: Run Foundry tests
         run: yarn test:unit
@@ -148,7 +148,7 @@ jobs:
           python-version: '3.8'
 
       - name: Install vyper
-        run: pip install vyper==0.3.0
+        run: pip install vyper==0.2.16
 
       - name: Run Foundry tests
         run: yarn test:invariant
@@ -192,7 +192,7 @@ jobs:
           python-version: '3.8'
 
       - name: Install vyper
-        run: pip install vyper==0.3.0
+        run: pip install vyper==0.2.16
 
       - name: Run Foundry tests
         run: yarn test:fuzz
